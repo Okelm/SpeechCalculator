@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onRecognitionFinished(stringExpression: String) {
-        TODO("not implemented")
+        presenter.evaluateExpression(stringExpression)
     }
 
     override fun onRecognitionError() {
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onEvaluationFinished(evaluation: Double) {
-        TODO("not implemented")
+        viewBinding.evaluation.text = evaluation.toString()
     }
 
     override fun onEvaluationError(error: String) {
