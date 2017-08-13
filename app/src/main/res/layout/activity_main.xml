@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+
+        <variable
+            name="listener"
+            type="com.bwidlarz.speechcalculator.MainActivity" />
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,24 +52,28 @@
                 android:id="@+id/new_expression_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{v -> listener.onNewEvaluationClicked()}"
                 android:text="@string/new_button" />
 
             <Button
-                android:id="@+id/continue_expression_toggle"
+                android:id="@+id/continue_expression_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{v -> listener.onContinueClicked()}"
                 android:text="@string/continue_button" />
 
             <Button
-                android:id="@+id/continues_evaluation_toggle"
+                android:id="@+id/continues_evaluation_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{v -> listener.onLoopClicked()}"
                 android:text="@string/loop" />
 
             <Button
                 android:id="@+id/reset_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{v -> listener.onResetClicked()}"
                 android:text="@string/reset" />
         </LinearLayout>
     </LinearLayout>
