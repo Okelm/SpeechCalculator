@@ -20,7 +20,7 @@
         <com.github.zagum.speechrecognitionview.RecognitionProgressView
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="80dp"
             android:layout_gravity="center_horizontal" />
 
         <EditText
@@ -41,7 +41,7 @@
             android:text="@string/equal_sign"
             android:textSize="40sp" />
 
-       <include layout="@layout/buttons_bar"
-           app:listener="@{listener}" />
+        <include layout="@layout/buttons_bar"
+            app:listener="@{listener}" />
     </LinearLayout>
 </layout>
