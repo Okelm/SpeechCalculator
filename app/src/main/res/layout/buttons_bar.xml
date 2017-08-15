@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+
+        <variable
+            name="listener"
+            type="com.bwidlarz.speechcalculator.RecognitionActionListener"/>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="26dp"
+        android:gravity="bottom|center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/new_expression_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v -> listener.onNewEvaluationClicked()}"
+            android:text="@string/new_button" />
+
+        <Button
+            android:id="@+id/continue_expression_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v -> listener.onContinueClicked()}"
+            android:text="@string/continue_button" />
+
+        <Button
+            android:id="@+id/continues_evaluation_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v -> listener.onLoopClicked()}"
+            android:text="@string/loop" />
+
+        <Button
+            android:id="@+id/reset_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{v -> listener.onResetClicked()}"
+            android:text="@string/reset" />
+    </LinearLayout>
+    </layout>
