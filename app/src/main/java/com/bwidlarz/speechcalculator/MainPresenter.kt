@@ -1,5 +1,8 @@
 package com.bwidlarz.speechcalculator
 
+import com.bwidlarz.speechcalculator.common.BasePresenter
+import com.bwidlarz.speechcalculator.common.evaluate
+import com.bwidlarz.speechcalculator.common.isNumberOrSymbol
 import java.util.*
 
 class MainPresenter : BasePresenter<SpeechView>() {

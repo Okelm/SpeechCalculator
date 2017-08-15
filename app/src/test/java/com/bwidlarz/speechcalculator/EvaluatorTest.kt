@@ -1,5 +1,6 @@
 package com.bwidlarz.speechcalculator
 
+import com.bwidlarz.speechcalculator.common.evaluate
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

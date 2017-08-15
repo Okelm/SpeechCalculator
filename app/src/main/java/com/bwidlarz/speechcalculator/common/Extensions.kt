@@ -1,4 +1,4 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.common
 
 import android.content.Context
 import android.support.annotation.StringRes

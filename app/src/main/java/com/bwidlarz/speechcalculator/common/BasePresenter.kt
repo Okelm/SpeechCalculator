@@ -1,4 +1,4 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.common
 
 import android.support.annotation.VisibleForTesting
 

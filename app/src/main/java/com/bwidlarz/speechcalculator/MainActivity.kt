@@ -9,6 +9,9 @@ import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
+import com.bwidlarz.speechcalculator.common.EvaluatorError
+import com.bwidlarz.speechcalculator.common.clear
+import com.bwidlarz.speechcalculator.common.toast
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
 import java.util.*
