@@ -64,17 +64,21 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
 
     override fun onResults(results: Bundle) {
         val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-        presenter.loadSpeech(matches[0])
+        presenter.loadSpeech(matches)
+    }
+
+    override fun onError(error: Int) {
+        val errorMessage = getErrorText(error)
+        toast(errorMessage)
     }
 
     override fun onRecognitionFinished(stringExpression: String) {
-//        viewBinding.progressBar.stop()
         presenter.evaluateExpression(stringExpression)
         viewBinding.expression.setText(stringExpression, TextView.BufferType.EDITABLE)
     }
 
-    override fun onRecognitionError() {
-        TODO("not implemented")
+    override fun onRecognitionError(string: String) {
+        toast(string)
     }
 
     override fun onEvaluationFinished(evaluation: Double) {
@@ -98,6 +102,25 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onResetClicked() {
-        TODO("not implemented")
+        viewBinding.apply {
+            expression.text.clear()
+            evaluation.clear()
+        }
+    }
+
+    private fun getErrorText(errorCode: Int): String {
+        val message: String = when (errorCode) {
+            SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
+            SpeechRecognizer.ERROR_CLIENT -> "Client side error"
+            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
+            SpeechRecognizer.ERROR_NETWORK -> "Network error"
+            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
+            SpeechRecognizer.ERROR_NO_MATCH -> "No match"
+            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RecognitionService busy"
+            SpeechRecognizer.ERROR_SERVER -> "error from server"
+            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
+            else -> "Didn't understand, please try again."
+        }
+        return message
     }
 }

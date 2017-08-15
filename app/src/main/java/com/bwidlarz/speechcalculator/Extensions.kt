@@ -5,6 +5,7 @@ import android.support.annotation.StringRes
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 
 fun Context.log(message: String) = Log.d(this.packageName, message)
@@ -21,3 +22,7 @@ fun Context.hideKeyboard(v: View) {
 }
 
 fun Context.string(@StringRes stringResId: Int): String = getString(stringResId)
+
+fun TextView.clear() {
+    text = ""
+}

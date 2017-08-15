@@ -1,5 +1,12 @@
 package com.bwidlarz.speechcalculator
 
+fun isNumberOrSymbol(string: String): Boolean {
+    for (char in string) {
+        if (!(char in '0'..'9' || char == '.' || char == '+' || char == '-' || char == '*' || char == '/' || char == ' ' || char == 'x')) return false
+    }
+    return true
+}
+
 fun evaluate(string: String): Double {
 
     var position = 0
