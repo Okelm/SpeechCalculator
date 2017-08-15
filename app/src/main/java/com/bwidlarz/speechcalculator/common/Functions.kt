@@ -1,4 +1,4 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.common
 
 import java.lang.Double.parseDouble
 
@@ -9,7 +9,9 @@ fun isNumberOrSymbol(string: String): Boolean {
     return true
 }
 
-fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double): Double {
+fun mockErrorHandler(error: EvaluatorError): Double = 0.0
+
+fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockErrorHandler): Double {
 
     var position = 0
     var char = '0'
