@@ -77,12 +77,13 @@ fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockEr
 
 fun isNumberOrSymbol(string: String): Boolean {
     for (char in string) {
-        if (!(char in '0'..'9' || char == '.' || char == '+' || char == '-' || char == '*' || char == '/' || char == ' ' || char == 'x')) return false
+        if (!(char in '0'..'9' || char == '.' || char == '+' || char == '-'
+                || char == '*' || char == '/' || char == ' ' || char == 'x')) return false
     }
     return true
 }
 
-fun mockErrorHandler(error: EvaluatorError): Double = 0.0 //default function for unit
+fun mockErrorHandler(error: EvaluatorError): Double = 0.0 //default function for unit tests
 
 
 fun getErrorText(errorCode: Int): String = when (errorCode) {
