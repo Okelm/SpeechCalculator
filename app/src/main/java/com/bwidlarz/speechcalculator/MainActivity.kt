@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v7.app.AppCompatActivity
+import android.widget.TextView
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
 import java.util.*
@@ -47,8 +48,14 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         }
     }
 
+    override fun onResults(results: Bundle) {
+        val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+        presenter.loadSpeech(matches[0])
+    }
+
     override fun onRecognitionFinished(stringExpression: String) {
         presenter.evaluateExpression(stringExpression)
+        viewBinding.expression.setText(stringExpression, TextView.BufferType.EDITABLE)
     }
 
     override fun onRecognitionError() {
