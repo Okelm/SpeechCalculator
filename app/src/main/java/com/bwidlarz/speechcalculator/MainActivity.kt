@@ -74,20 +74,23 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onPartialResults(partialResults: Bundle) {
-        proceedResults(partialResults)
+        proceedResults(partialResults, this::onPartialResultDelivered )
     }
 
     override fun onResults(results: Bundle) {
-        proceedResults(results)
+        proceedResults(results, this::onLoopClicked)
     }
 
-    private fun proceedResults(partialResults: Bundle) {
+    private fun proceedResults(partialResults: Bundle, doOnLoopType: () -> Unit) {
         val matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 
         when (workingState) {
             WorkingState.NEW -> presenter.loadSpeech(matches)
             WorkingState.CONTINUE -> presenter.loadSpeechWithPrevious(matches, textSoFar)
-            WorkingState.LOOP -> presenter.loadSpeech(matches)
+            WorkingState.LOOP -> {
+                presenter.loadSpeechWithPrevious(matches, textSoFar)
+                doOnLoopType()
+            }
             WorkingState.NONE -> toast("None") //todo
         }
     }
@@ -128,7 +131,9 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onLoopClicked() {
-        TODO("not implemented")
+        workingState = WorkingState.LOOP
+        speechRecognizer.stopListening()
+        speechRecognizer.startListening(recognizerIntent)
     }
 
     override fun onResetClicked() {
@@ -137,6 +142,8 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
             evaluation.clear()
         }
     }
+
+    private fun onPartialResultDelivered() {}//todo
 
     private fun getErrorText(errorCode: Int): String = when (errorCode) {
         SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
@@ -151,6 +158,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         else -> "Didn't understand, please try again."
     }
 }
+
 
 enum class WorkingState {
     NEW, CONTINUE, LOOP, NONE
