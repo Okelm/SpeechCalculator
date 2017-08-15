@@ -46,6 +46,12 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH.toString())
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Enter the expression")
         }
+
+        viewBinding.progressBar.apply {
+            setSpeechRecognizer(speechRecognizer)
+            setRecognitionListener(this@MainActivity)
+            play()
+        }
     }
 
     override fun onResults(results: Bundle) {
@@ -54,6 +60,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onRecognitionFinished(stringExpression: String) {
+        viewBinding.progressBar.stop()
         presenter.evaluateExpression(stringExpression)
         viewBinding.expression.setText(stringExpression, TextView.BufferType.EDITABLE)
     }
