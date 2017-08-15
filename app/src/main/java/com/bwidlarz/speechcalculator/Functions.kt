@@ -10,9 +10,9 @@ fun evaluate(string: String): Double {
         char = if (++position < string.length) string[position] else endingChar
     }
 
-    fun moveForwardIfCharOrEmpty(charWeSeek: Char): Boolean {
+    fun moveForwardIfCharOrEmpty(vararg charWeSeek: Char): Boolean {
         while (char == ' ') moveToNextChar()
-        if (char == charWeSeek) {
+        if (charWeSeek.contains(char)) {
             moveToNextChar()
             return true
         }
@@ -41,11 +41,20 @@ fun evaluate(string: String): Double {
         return parseTheWholeNumber()
     }
 
-    fun parseExpression(): Double {
+    fun parseTerm(): Double {
         var x = parseFactor()
         while (true) when {
-            moveForwardIfCharOrEmpty('+') -> x += parseFactor()
-            moveForwardIfCharOrEmpty('-') -> x -= parseFactor()
+            moveForwardIfCharOrEmpty('*','x') -> x *= parseFactor()
+            moveForwardIfCharOrEmpty('/') -> x /= parseFactor()
+            else -> return x
+        }
+    }
+
+    fun parseExpression(): Double {
+        var x = parseTerm()
+        while (true) when {
+            moveForwardIfCharOrEmpty('+') -> x += parseTerm()
+            moveForwardIfCharOrEmpty('-') -> x -= parseTerm()
             else -> return x
         }
     }

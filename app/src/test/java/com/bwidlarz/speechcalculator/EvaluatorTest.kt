@@ -5,6 +5,8 @@ import org.junit.Test
 
 class EvaluatorTest {
 
+    //region Addition and Subtraction
+
     //region Addition and Subtraction without spaces
     @Test
     fun should_calculateSimpleAddition(){
@@ -155,4 +157,39 @@ class EvaluatorTest {
         val result = evaluate("100.0 + 55- + - + -85.5")
         assertTrue(result == 69.5)
     }
+    //endregion
+    //endregion Addition and Subtraction
+
+    //region Addition, Subtraction, Multiplication, Division
+    @Test
+    fun should_calculate_withSpace_double_1(){
+        val result = evaluate("2.5 * 2.5")
+        assertTrue(result == 6.25)
+    }
+
+    @Test
+    fun should_calculate_withSpace_double_2(){
+        val result = evaluate("1 + 1 * 2.0")
+        assertTrue(result == 3.0)
+    }
+
+    @Test
+    fun should_calculate_withSpace_double_3(){
+        val result = evaluate("10/5")
+        assertTrue(result == 2.0)
+    }
+
+    @Test
+    fun should_calculate_withSpace_double_4(){
+        val result = evaluate("5*4/2")
+        assertTrue(result == 10.0)
+    }
+
+    @Test
+    fun should_calculate_withSpace_double_5(){
+        val result = evaluate("100*100*0")
+        assertTrue(result == 0.0)
+    }
+    //endregion
+
 }
