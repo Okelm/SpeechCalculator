@@ -9,10 +9,7 @@ import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import com.bwidlarz.speechcalculator.common.EvaluatorError
-import com.bwidlarz.speechcalculator.common.clear
-import com.bwidlarz.speechcalculator.common.log
-import com.bwidlarz.speechcalculator.common.toast
+import com.bwidlarz.speechcalculator.common.*
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
 import java.util.*
@@ -34,12 +31,27 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         viewBinding.listener = this
 
         presenter = MainPresenter()
-        presenter.attach(this)
 
         requestPermissions()
-        setupRecognizer()
     }
 
+    override fun onPause() {
+        speechRecognizer.stopListening()
+        speechRecognizer.cancel()
+        presenter.detach()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        speechRecognizer.destroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.attach(this)
+        setupRecognizer()
+    }
     private fun requestPermissions() {
         RxPermissions(this)
                 .request(Manifest.permission.RECORD_AUDIO)
@@ -74,20 +86,23 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onPartialResults(partialResults: Bundle) {
-        proceedResults(partialResults)
+        proceedResults(partialResults, this::onPartialResultDelivered )
     }
 
     override fun onResults(results: Bundle) {
-        proceedResults(results)
+        proceedResults(results, this::onLoopClicked)
     }
 
-    private fun proceedResults(partialResults: Bundle) {
+    private fun proceedResults(partialResults: Bundle, doOnLoopType: () -> Unit) {
         val matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 
         when (workingState) {
             WorkingState.NEW -> presenter.loadSpeech(matches)
             WorkingState.CONTINUE -> presenter.loadSpeechWithPrevious(matches, textSoFar)
-            WorkingState.LOOP -> presenter.loadSpeech(matches)
+            WorkingState.LOOP -> {
+                presenter.loadSpeechWithPrevious(matches, textSoFar)
+                doOnLoopType()
+            }
             WorkingState.NONE -> toast("None") //todo
         }
     }
@@ -128,7 +143,9 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onLoopClicked() {
-        TODO("not implemented")
+        workingState = WorkingState.LOOP
+        speechRecognizer.stopListening()
+        speechRecognizer.startListening(recognizerIntent)
     }
 
     override fun onResetClicked() {
@@ -138,20 +155,5 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         }
     }
 
-    private fun getErrorText(errorCode: Int): String = when (errorCode) {
-        SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
-        SpeechRecognizer.ERROR_CLIENT -> "Client side error"
-        SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
-        SpeechRecognizer.ERROR_NETWORK -> "Network error"
-        SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
-        SpeechRecognizer.ERROR_NO_MATCH -> "No match"
-        SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RecognitionService busy"
-        SpeechRecognizer.ERROR_SERVER -> "error from server"
-        SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
-        else -> "Didn't understand, please try again."
-    }
-}
-
-enum class WorkingState {
-    NEW, CONTINUE, LOOP, NONE
+    private fun onPartialResultDelivered() {}//todo
 }
