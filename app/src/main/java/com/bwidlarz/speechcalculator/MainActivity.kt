@@ -34,12 +34,27 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         viewBinding.listener = this
 
         presenter = MainPresenter()
-        presenter.attach(this)
 
         requestPermissions()
-        setupRecognizer()
     }
 
+    override fun onPause() {
+        speechRecognizer.stopListening()
+        speechRecognizer.cancel()
+        presenter.detach()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        speechRecognizer.destroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        presenter.attach(this)
+        setupRecognizer()
+    }
     private fun requestPermissions() {
         RxPermissions(this)
                 .request(Manifest.permission.RECORD_AUDIO)
