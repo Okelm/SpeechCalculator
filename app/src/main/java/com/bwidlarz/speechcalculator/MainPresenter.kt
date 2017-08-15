@@ -8,13 +8,16 @@ class MainPresenter : BasePresenter<SpeechView>() {
         val result = results
                 .filter { isNumberOrSymbol(it) }
                 .asReversed()
-                .first()
+                .firstOrNull()
 
-       withView { if (result.isNotEmpty()) onRecognitionFinished(result) else onRecognitionError("empty string")}
+       withView { if (!result.isNullOrEmpty()) onRecognitionFinished(result!!) else onRecognitionError("Please try again!")}
     }
 
     fun evaluateExpression(stringExpression: String) {
-        val evaluation = evaluate(stringExpression)
-        withView { onEvaluationFinished(evaluation) }}
+        withView {
+            val evaluation = evaluate(stringExpression, this::onEvaluationError)
+            onEvaluationFinished(evaluation)
+        }
+    }
 }
 

@@ -1,5 +1,7 @@
 package com.bwidlarz.speechcalculator
 
+import java.lang.Double.parseDouble
+
 fun isNumberOrSymbol(string: String): Boolean {
     for (char in string) {
         if (!(char in '0'..'9' || char == '.' || char == '+' || char == '-' || char == '*' || char == '/' || char == ' ' || char == 'x')) return false
@@ -7,7 +9,7 @@ fun isNumberOrSymbol(string: String): Boolean {
     return true
 }
 
-fun evaluate(string: String): Double {
+fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double): Double {
 
     var position = 0
     var char = '0'
@@ -35,9 +37,13 @@ fun evaluate(string: String): Double {
                 while (isItStillNumber()) {
                     moveToNextChar()
                 }
-                java.lang.Double.parseDouble(string.substring(startPos, position))
+                try {
+                    parseDouble(string.substring(startPos, position))
+                } catch (e: NumberFormatException){
+                    errorHandler(EvaluatorError.UNEXPECTED_CHAR)
+                }
             }
-            else -> 0.0
+            else -> errorHandler(EvaluatorError.UNEXPECTED_CHAR)
         }
     }
 
@@ -68,7 +74,7 @@ fun evaluate(string: String): Double {
 
     fun parse(): Double {
         val x = parseExpression()
-        if (position < string.length) return 0.0
+        if (position < string.length) errorHandler(EvaluatorError.UNEXPECTED_CHAR)
         return x
     }
 

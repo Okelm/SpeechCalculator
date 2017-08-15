@@ -85,8 +85,9 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         viewBinding.evaluation.text = evaluation.toString()
     }
 
-    override fun onEvaluationError(error: String) {
-        TODO("not implemented")
+    override fun onEvaluationError(error: EvaluatorError): Double {
+        toast(error.errorResId)
+        return 0.0
     }
 
     override fun onNewEvaluationClicked() {

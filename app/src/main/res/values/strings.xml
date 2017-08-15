@@ -5,4 +5,8 @@
     <string name="continue_button">Continue</string>
     <string name="new_button">New</string>
     <string name="equal_sign">=</string>
+
+    // Evaluator Error Handling
+    <string name="unexpected_char_error">Unexpected char</string>
+    <string name="unknown_error">Unknown error</string>
 </resources>
