@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import com.bwidlarz.speechcalculator.common.EvaluatorError
 import com.bwidlarz.speechcalculator.common.clear
+import com.bwidlarz.speechcalculator.common.log
 import com.bwidlarz.speechcalculator.common.toast
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
@@ -23,6 +24,9 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     private lateinit var presenter: MainPresenter
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
+
+    private var workingState: WorkingState = WorkingState.NONE
+    private var textSoFar: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +53,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         recognizerIntent.apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH.toString())
+            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         }
 
         viewBinding.progressBar.apply {
@@ -64,9 +69,27 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         }
     }
 
+    override fun onBeginningOfSpeech() {
+        textSoFar = viewBinding.expression.text.toString()
+    }
+
+    override fun onPartialResults(partialResults: Bundle) {
+        proceedResults(partialResults)
+    }
+
     override fun onResults(results: Bundle) {
-        val matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-        presenter.loadSpeech(matches)
+        proceedResults(results)
+    }
+
+    private fun proceedResults(partialResults: Bundle) {
+        val matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+
+        when (workingState) {
+            WorkingState.NEW -> presenter.loadSpeech(matches)
+            WorkingState.CONTINUE -> presenter.loadSpeechWithPrevious(matches, textSoFar)
+            WorkingState.LOOP -> presenter.loadSpeech(matches)
+            WorkingState.NONE -> toast("None") //todo
+        }
     }
 
     override fun onError(error: Int) {
@@ -75,8 +98,10 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onRecognitionFinished(stringExpression: String) {
+        this.log(stringExpression)
         presenter.evaluateExpression(stringExpression)
         viewBinding.expression.setText(stringExpression, TextView.BufferType.EDITABLE)
+        viewBinding.expression.setSelection(stringExpression.length)
     }
 
     override fun onRecognitionError(string: String) {
@@ -93,11 +118,13 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onNewEvaluationClicked() {
-        speechRecognizer.startListening(recognizerIntent) //todo
+        workingState = WorkingState.NEW
+        speechRecognizer.startListening(recognizerIntent)
     }
 
     override fun onContinueClicked() {
-        TODO("not implemented")
+        workingState = WorkingState.CONTINUE
+        speechRecognizer.startListening(recognizerIntent)
     }
 
     override fun onLoopClicked() {
@@ -123,4 +150,8 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
         else -> "Didn't understand, please try again."
     }
+}
+
+enum class WorkingState {
+    NEW, CONTINUE, LOOP, NONE
 }
