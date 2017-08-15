@@ -6,11 +6,13 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
 import java.util.*
+
 
 class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
 
@@ -50,6 +52,12 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         viewBinding.progressBar.apply {
             setSpeechRecognizer(speechRecognizer)
             setRecognitionListener(this@MainActivity)
+            setColors(intArrayOf(
+                    ContextCompat.getColor(this@MainActivity, R.color.color1),
+                    ContextCompat.getColor(this@MainActivity, R.color.color2),
+                    ContextCompat.getColor(this@MainActivity, R.color.color3),
+                    ContextCompat.getColor(this@MainActivity, R.color.color4),
+                    ContextCompat.getColor(this@MainActivity, R.color.color5)))
             play()
         }
     }
@@ -60,7 +68,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onRecognitionFinished(stringExpression: String) {
-        viewBinding.progressBar.stop()
+//        viewBinding.progressBar.stop()
         presenter.evaluateExpression(stringExpression)
         viewBinding.expression.setText(stringExpression, TextView.BufferType.EDITABLE)
     }
