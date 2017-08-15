@@ -3,15 +3,6 @@ package com.bwidlarz.speechcalculator.common
 import android.speech.SpeechRecognizer
 import java.lang.Double.parseDouble
 
-fun isNumberOrSymbol(string: String): Boolean {
-    for (char in string) {
-        if (!(char in '0'..'9' || char == '.' || char == '+' || char == '-' || char == '*' || char == '/' || char == ' ' || char == 'x')) return false
-    }
-    return true
-}
-
-fun mockErrorHandler(error: EvaluatorError): Double = 0.0
-
 fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockErrorHandler): Double {
 
     var position = 0
@@ -83,6 +74,16 @@ fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockEr
 
     return parse()
 }
+
+fun isNumberOrSymbol(string: String): Boolean {
+    for (char in string) {
+        if (!(char in '0'..'9' || char == '.' || char == '+' || char == '-' || char == '*' || char == '/' || char == ' ' || char == 'x')) return false
+    }
+    return true
+}
+
+fun mockErrorHandler(error: EvaluatorError): Double = 0.0 //default function for unit
+
 
 fun getErrorText(errorCode: Int): String = when (errorCode) {
     SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"

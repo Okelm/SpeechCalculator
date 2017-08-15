@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     private lateinit var recognizerIntent: Intent
 
     private var workingState: WorkingState = WorkingState.NONE
-    private var textSoFar: String = ""
+    private var textSoFar: String = EMPTY_STRING
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,9 +98,9 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
 
         when (workingState) {
             WorkingState.NEW -> presenter.loadSpeech(matches)
-            WorkingState.CONTINUE -> presenter.loadSpeechWithPrevious(matches, textSoFar)
+            WorkingState.CONTINUE -> presenter.loadSpeech(matches, textSoFar)
             WorkingState.LOOP -> {
-                presenter.loadSpeechWithPrevious(matches, textSoFar)
+                presenter.loadSpeech(matches, textSoFar)
                 doOnLoopType()
             }
             WorkingState.NONE -> toast("None") //todo
@@ -113,14 +113,14 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onRecognitionFinished(stringExpression: String) {
-        this.log(stringExpression)
+        //this.log(stringExpression)
         presenter.evaluateExpression(stringExpression)
         viewBinding.expression.setText(stringExpression, TextView.BufferType.EDITABLE)
         viewBinding.expression.setSelection(stringExpression.length)
     }
 
-    override fun onRecognitionError(string: String) {
-        toast(string)
+    override fun onRecognitionError() {
+        //todo
     }
 
     override fun onEvaluationFinished(evaluation: Double) {
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onEvaluationError(error: EvaluatorError): Double {
-        toast(error.errorResId)
+        //toast(error.errorResId) //todo
         return 0.0
     }
 
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
 
     override fun onLoopClicked() {
         workingState = WorkingState.LOOP
-        speechRecognizer.stopListening()
+       // speechRecognizer.stopListening()
         speechRecognizer.startListening(recognizerIntent)
     }
 
