@@ -9,10 +9,7 @@ import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import com.bwidlarz.speechcalculator.common.EvaluatorError
-import com.bwidlarz.speechcalculator.common.clear
-import com.bwidlarz.speechcalculator.common.log
-import com.bwidlarz.speechcalculator.common.toast
+import com.bwidlarz.speechcalculator.common.*
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
 import java.util.*
@@ -159,22 +156,4 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     private fun onPartialResultDelivered() {}//todo
-
-    private fun getErrorText(errorCode: Int): String = when (errorCode) {
-        SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"
-        SpeechRecognizer.ERROR_CLIENT -> "Client side error"
-        SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
-        SpeechRecognizer.ERROR_NETWORK -> "Network error"
-        SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
-        SpeechRecognizer.ERROR_NO_MATCH -> "No match"
-        SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RecognitionService busy"
-        SpeechRecognizer.ERROR_SERVER -> "error from server"
-        SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
-        else -> "Didn't understand, please try again."
-    }
-}
-
-
-enum class WorkingState {
-    NEW, CONTINUE, LOOP, NONE
 }
