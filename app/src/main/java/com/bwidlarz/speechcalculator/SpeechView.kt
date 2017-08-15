@@ -5,7 +5,7 @@ import com.bwidlarz.speechcalculator.common.EvaluatorError
 
 interface SpeechView : BaseView {
     fun onRecognitionFinished(stringExpression: String)
-    fun onRecognitionError(string: String)
+    fun onRecognitionError()
     fun onEvaluationFinished(evaluation: Double)
     fun onEvaluationError(error: EvaluatorError): Double
 }
