@@ -5,21 +5,21 @@ import android.speech.RecognitionListener
 
 //TODO
 interface RecognitionListenerAdapted: RecognitionListener {
-    override fun onReadyForSpeech(p0: Bundle?) {}
+    override fun onReadyForSpeech(data: Bundle) {}
 
-    override fun onRmsChanged(p0: Float) {}
+    override fun onRmsChanged(data: Float) {}
 
-    override fun onBufferReceived(p0: ByteArray?) {}
+    override fun onBufferReceived(buffer: ByteArray) {}
 
-    override fun onPartialResults(p0: Bundle?) {}
+    override fun onPartialResults(partialResults: Bundle) {}
 
-    override fun onEvent(p0: Int, p1: Bundle?) {}
+    override fun onEvent(event: Int, data: Bundle) {}
 
     override fun onBeginningOfSpeech() {}
 
     override fun onEndOfSpeech() {}
 
-    override fun onError(p0: Int) {}
+    override fun onError(error: Int) {}
 
-    override fun onResults(p0: Bundle?) {}
+    override fun onResults(results: Bundle) {}
 }
