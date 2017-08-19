@@ -4,6 +4,12 @@
     <string name="unknown_error">Unknown error</string>
     <string name="parsing_error">Parsing error</string>
 
+    // Internet
+    <string name="no_internet">No internet</string>
+    <string name="no_internet_message">App needs internet connection to work. Turn it on in the settings.</string>
+    <string name="settings_label">Settings</string>
+    <string name="ok">OK</string>
+
     <string name="app_name">SpeechCalculator</string>
     <string name="reset">Reset</string>
     <string name="loop">Loop</string>

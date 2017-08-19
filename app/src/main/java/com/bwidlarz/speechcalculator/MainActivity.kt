@@ -4,9 +4,11 @@ import android.Manifest
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.TextView
 import com.bwidlarz.speechcalculator.common.*
@@ -124,9 +126,20 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         }
     }
 
+    private fun createDisableLocationMockingDialog(): AlertDialog {
+        return AlertDialog.Builder(this, R.style.Base_Theme_AppCompat_Light_Dialog)
+                .setTitle(getString(R.string.no_internet))
+                .setMessage(getString(R.string.no_internet_message))
+                .setPositiveButton(getString(R.string.settings_label), { dialog, _ -> startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS)) })
+                .setNegativeButton(getString(R.string.ok), { dialog, _ -> dialog.dismiss()})
+                .create()
+    }
+
     override fun onError(error: Int) {
-        val errorMessage = getErrorText(error)
-        toast(errorMessage)
+        when(error){
+            SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_SERVER -> createDisableLocationMockingDialog().show()
+            else -> toast(getErrorText(error))
+        }
         animateVisibility(viewBinding.progressBar, false)
     }
 
