@@ -34,6 +34,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
 
     private var workingState: WorkingState = WorkingState.NONE
     private var textSoFar: String = EMPTY_STRING
+    private val DELAY_TUTORIAL_MS = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +44,21 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         presenter = MainPresenter()
         sharedPrefSettings = SharedPrefSettings(this)
 
-        requestPermissions()
         restoreStateIfNeeded(savedInstanceState)
         setShowcaseSequance()
+        requestPermissions()
     }
 
     private fun restoreStateIfNeeded(savedInstanceState: Bundle?) {
-            savedInstanceState?.apply {
+        if (savedInstanceState != null){
+            savedInstanceState.apply {
                 viewBinding.evaluation.text = getString(EVALUATION)
                 viewBinding.expression.setText(getString(SO_FAR_TEXT_EXPRESSION), TextView.BufferType.EDITABLE)
             }
+        } else {
+            viewBinding.expression.setText(sharedPrefSettings.lastExpression, TextView.BufferType.EDITABLE)
+            viewBinding.evaluation.text = sharedPrefSettings.lastEvaluation
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,9 +82,12 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         super.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
+
         speechRecognizer.destroy()
+        sharedPrefSettings.lastExpression = viewBinding.expression.text.toString()
+        sharedPrefSettings.lastEvaluation = viewBinding.evaluation.text.toString()
     }
 
     override fun onResume() {
@@ -234,13 +243,11 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
 
     private fun setShowcaseSequance(){
         val config = ShowcaseConfig()
-        config.delay = 0 // half second between each showcase view
-
+        config.delay = DELAY_TUTORIAL_MS
         val sequence = MaterialShowcaseSequence(this, sharedPrefSettings.tutorialShownId.toString())
 
         sequence.apply {
 
-//            setOnItemShownListener { itemView, position -> Toast.makeText(itemView.context, "Item #" + position, Toast.LENGTH_SHORT).show() }
             setConfig(config)
             addSequenceItem(
                     MaterialShowcaseView.Builder(this@MainActivity)
