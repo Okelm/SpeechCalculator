@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onNewEvaluationClicked() {
+        clearFields()
         workingState = WorkingState.NEW
         speechRecognizer.startListening(recognizerIntent)
         showProgress(true)
@@ -155,10 +156,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onResetClicked() {
-        viewBinding.apply {
-            expression.text.clear()
-            evaluation.clear()
-        }
+        clearFields()
     }
 
     override fun onStopClicked() {
@@ -178,6 +176,13 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
                 .withEndAction { if (!shouldBeVisible) view.gone() }
                 .withStartAction { if (shouldBeVisible) view.visible() }
                 .start()
+    }
+
+    private fun clearFields() {
+        viewBinding.apply {
+            expression.text.clear()
+            evaluation.clear()
+        }
     }
 
     private fun onPartialResultDelivered() {}//todo

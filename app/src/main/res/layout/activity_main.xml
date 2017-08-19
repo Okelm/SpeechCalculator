@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center" />
 
         <EditText
             android:id="@+id/expression"
@@ -35,6 +35,7 @@
             android:layout_marginTop="47dp" />
 
         <include layout="@layout/divider_layout" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +57,9 @@
                 autofit:minTextSize="16sp" />
         </LinearLayout>
 
-       <include layout="@layout/buttons_bar"
-           app:listener="@{listener}" />
+        <include layout="@layout/divider_layout" />
+
+        <include layout="@layout/buttons_bar"
+            app:listener="@{listener}" />
     </LinearLayout>
 </layout>
