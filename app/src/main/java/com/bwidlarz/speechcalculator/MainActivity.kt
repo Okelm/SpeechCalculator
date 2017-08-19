@@ -18,6 +18,9 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
 
+    private val SO_FAR_TEXT_EXPRESSION = "so_far_text_expression"
+    private val EVALUATION = "evaluation"
+
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var presenter: MainPresenter
     private lateinit var speechRecognizer: SpeechRecognizer
@@ -34,6 +37,14 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         presenter = MainPresenter()
 
         requestPermissions()
+        restoreStateIfNeeded(savedInstanceState)
+    }
+
+    private fun restoreStateIfNeeded(savedInstanceState: Bundle?) {
+            savedInstanceState?.apply {
+                viewBinding.evaluation.text = getString(EVALUATION)
+                viewBinding.expression.setText(getString(SO_FAR_TEXT_EXPRESSION), TextView.BufferType.EDITABLE)
+            }
     }
 
     override fun onPause() {
@@ -53,6 +64,13 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         presenter.attach(this)
         setupRecognizer()
     }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putString(EVALUATION, viewBinding.evaluation.text.toString())
+        outState?.putString(SO_FAR_TEXT_EXPRESSION, viewBinding.expression.text.toString())
+    }
+
     private fun requestPermissions() {
         RxPermissions(this)
                 .request(Manifest.permission.RECORD_AUDIO)
@@ -80,6 +98,10 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
                     ContextCompat.getColor(this@MainActivity, R.color.color5)))
             play()
         }
+    }
+
+    override fun onReadyForSpeech(data: Bundle) {
+        showProgress(true)
     }
 
     override fun onBeginningOfSpeech() {
@@ -140,19 +162,16 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         clearFields()
         workingState = WorkingState.NEW
         speechRecognizer.startListening(recognizerIntent)
-        showProgress(true)
     }
 
     override fun onContinueClicked() {
         workingState = WorkingState.CONTINUE
         speechRecognizer.startListening(recognizerIntent)
-        showProgress(true)
     }
 
     override fun onLoopClicked() {
         workingState = WorkingState.LOOP
         speechRecognizer.startListening(recognizerIntent)
-        showProgress(true)
     }
 
     override fun onResetClicked() {
