@@ -8,6 +8,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.TextView
 import com.bwidlarz.speechcalculator.common.*
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
@@ -36,15 +37,15 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onPause() {
-        speechRecognizer.stopListening()
-        speechRecognizer.cancel()
+//        speechRecognizer.stopListening()
+//        speechRecognizer.cancel()
         presenter.detach()
         super.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        speechRecognizer.destroy()
+        //speechRecognizer.destroy()
     }
 
     override fun onResume() {
@@ -110,7 +111,10 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     override fun onError(error: Int) {
         val errorMessage = getErrorText(error)
         toast(errorMessage)
+        animateVisibility(viewBinding.progressBar, false)
     }
+
+    override fun onEndOfSpeech() = if (workingState != WorkingState.LOOP) showProgress(false) else Unit //todo
 
     override fun onRecognitionFinished(stringExpression: String) {
         //this.log(stringExpression)
@@ -128,24 +132,26 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
     }
 
     override fun onEvaluationError(error: EvaluatorError): Double {
-        //toast(error.errorResId) //todo
+//        toast(error.errorResId) //todo
         return 0.0
     }
 
     override fun onNewEvaluationClicked() {
         workingState = WorkingState.NEW
         speechRecognizer.startListening(recognizerIntent)
+        showProgress(true)
     }
 
     override fun onContinueClicked() {
         workingState = WorkingState.CONTINUE
         speechRecognizer.startListening(recognizerIntent)
+        showProgress(true)
     }
 
     override fun onLoopClicked() {
         workingState = WorkingState.LOOP
-       // speechRecognizer.stopListening()
         speechRecognizer.startListening(recognizerIntent)
+        showProgress(true)
     }
 
     override fun onResetClicked() {
@@ -153,6 +159,25 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
             expression.text.clear()
             evaluation.clear()
         }
+    }
+
+    override fun onStopClicked() {
+        speechRecognizer.cancel()
+        showProgress(false)
+    }
+
+    private fun showProgress(showLoading: Boolean) = animateVisibility(viewBinding.progressBar, showLoading)
+
+    private fun animateVisibility(view: View, shouldBeVisible: Boolean) {
+        view.clearAnimation()
+
+        val finalScale = if (shouldBeVisible) 1f else 0f
+
+        view.animate().scaleX(finalScale).scaleY(finalScale)
+                .setDuration(200)
+                .withEndAction { if (!shouldBeVisible) view.gone() }
+                .withStartAction { if (shouldBeVisible) view.visible() }
+                .start()
     }
 
     private fun onPartialResultDelivered() {}//todo

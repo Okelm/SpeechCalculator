@@ -24,3 +24,11 @@ fun Context.hideKeyboard(v: View) {
 fun Context.string(@StringRes stringResId: Int): String = getString(stringResId)
 
 fun TextView.clear() = setText("")
+
+fun View?.visible() {
+    if (this != null) visibility = View.VISIBLE
+}
+
+fun View?.gone() {
+    if (this != null) visibility = View.GONE
+}

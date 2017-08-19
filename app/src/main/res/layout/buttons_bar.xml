@@ -16,32 +16,54 @@
         android:gravity="bottom|center_horizontal"
         android:orientation="horizontal">
 
-        <Button
+        <TextView
             android:id="@+id/new_expression_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+            style="@style/MicButton"
+            android:drawableTint="@color/color1"
             android:onClick="@{v -> listener.onNewEvaluationClicked()}"
             android:text="@string/new_button" />
 
-        <Button
+        <TextView
             android:id="@+id/continue_expression_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+            style="@style/MicButton"
+            android:drawableTint="@color/color2"
             android:onClick="@{v -> listener.onContinueClicked()}"
             android:text="@string/continue_button" />
 
-        <Button
+        <TextView
             android:id="@+id/continues_evaluation_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+            style="@style/MicButton"
+            android:drawableTint="@color/color3"
             android:onClick="@{v -> listener.onLoopClicked()}"
             android:text="@string/loop" />
 
-        <Button
+        <TextView
             android:id="@+id/reset_button"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            style="@style/MicButton"
+            android:drawableTint="@color/color5"
             android:onClick="@{v -> listener.onResetClicked()}"
             android:text="@string/reset" />
+
+        <TextView
+            android:id="@+id/stop_button"
+            android:layout_height="wrap_content"
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            style="@style/MicButton"
+            android:drawableTint="@color/color4"
+            android:onClick="@{v -> listener.onStopClicked()}"
+            android:text="@string/stop" />
     </LinearLayout>
-    </layout>
+</layout>
