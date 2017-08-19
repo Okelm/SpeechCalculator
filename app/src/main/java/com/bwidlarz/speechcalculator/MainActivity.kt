@@ -5,7 +5,6 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.provider.Settings
-import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
@@ -20,7 +19,6 @@ import dagger.android.AndroidInjection
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
-import java.util.*
 import javax.inject.Inject
 
 class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
@@ -29,10 +27,11 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     private val EVALUATION = "evaluation"
 
     private lateinit var viewBinding: ActivityMainBinding
+
     @Inject lateinit var presenter: MainPresenter
-    private lateinit var speechRecognizer: SpeechRecognizer
-    private lateinit var recognizerIntent: Intent
-    private lateinit var sharedPrefSettings: SharedPrefSettings
+    @Inject lateinit var sharedPrefSettings: SharedPrefSettings
+    @Inject lateinit var speechRecognizer: SpeechRecognizer
+    @Inject lateinit var recognizerIntent: Intent
 
     private var workingState: WorkingState = WorkingState.NONE
     private var textSoFar: String = EMPTY_STRING
@@ -44,9 +43,6 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         super.onCreate(savedInstanceState)
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewBinding.listener = this
-
-        presenter = MainPresenter()
-        sharedPrefSettings = SharedPrefSettings(this)
 
         restoreStateIfNeeded(savedInstanceState)
         setShowcaseSequance()
@@ -114,14 +110,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     private fun setupRecognizer() {
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
         speechRecognizer.setRecognitionListener(this)
-
-        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        recognizerIntent.apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH.toString())
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-        }
 
         viewBinding.progressBar.apply {
             setSpeechRecognizer(speechRecognizer)
