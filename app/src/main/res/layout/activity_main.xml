@@ -28,6 +28,7 @@
 
         <EditText
             android:id="@+id/expression"
+            android:inputType="text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -45,7 +46,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="= "
+                android:text="@string/equal_sign"
                 android:textSize="70sp" />
 
             <me.grantland.widget.AutofitTextView
@@ -60,7 +61,9 @@
 
         <include layout="@layout/divider_layout" />
 
-        <include layout="@layout/buttons_bar"
+        <include
+            android:id="@+id/button_bar"
+            layout="@layout/buttons_bar"
             app:listener="@{listener}" />
     </LinearLayout>
 </layout>
