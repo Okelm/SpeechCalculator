@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import com.bwidlarz.speechcalculator.common.*
@@ -16,7 +15,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import java.util.*
 
 
-class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
+class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
 
     private val SO_FAR_TEXT_EXPRESSION = "so_far_text_expression"
     private val EVALUATION = "evaluation"
@@ -75,6 +74,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         RxPermissions(this)
                 .request(Manifest.permission.RECORD_AUDIO)
                 .subscribe()
+                .addToDisposables(disposables)
     }
 
     private fun setupRecognizer() {
@@ -147,9 +147,9 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         viewBinding.evaluation.text = evaluation.toString()
     }
 
-    override fun onEvaluationError(error: EvaluatorError): Double {
-//        toast(error.errorResId) //todo
-        return 0.0
+    override fun onEvaluationError(throwable: Throwable): Double {
+       // toast(throwable.message.toString())
+        return DEFAULT_RESULT
     }
 
     override fun onNewEvaluationClicked() {

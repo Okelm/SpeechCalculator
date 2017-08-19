@@ -1,8 +1,11 @@
 package com.bwidlarz.speechcalculator.common
 
 import android.support.annotation.VisibleForTesting
+import io.reactivex.disposables.CompositeDisposable
 
 abstract class BasePresenter<ViewInterface : BaseView> {
+
+    protected val disposables: CompositeDisposable = CompositeDisposable()
 
     var view: ViewInterface? = null
         @VisibleForTesting(otherwise = VisibleForTesting.NONE) get
@@ -21,6 +24,7 @@ abstract class BasePresenter<ViewInterface : BaseView> {
 
     open fun detach() {
         onPreDetach()
+        disposables.clear()
         view = null
     }
 

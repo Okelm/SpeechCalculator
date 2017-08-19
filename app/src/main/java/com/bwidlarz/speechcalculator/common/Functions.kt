@@ -3,7 +3,7 @@ package com.bwidlarz.speechcalculator.common
 import android.speech.SpeechRecognizer
 import java.lang.Double.parseDouble
 
-fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockErrorHandler): Double {
+fun evaluate(string: String, errorHandler: (Throwable) -> Double = ::mockErrorHandler): Double {
 
     var position = 0
     var char = '0'
@@ -35,13 +35,13 @@ fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockEr
                     parseDouble(string.substring(startPos, position))
                 } catch (e: Exception){
                     when(e){
-                        is NumberFormatException -> errorHandler(EvaluatorError.UNEXPECTED_CHAR)
-                        is StringIndexOutOfBoundsException -> errorHandler(EvaluatorError.PARSING)
-                        else -> errorHandler(EvaluatorError.UNKNOWN)
+                        is NumberFormatException -> errorHandler(e)
+                        is StringIndexOutOfBoundsException -> errorHandler(e)
+                        else -> errorHandler(e)
                     }
                 }
             }
-            else -> errorHandler(EvaluatorError.UNKNOWN)
+            else -> DEFAULT_RESULT
         }
     }
 
@@ -72,7 +72,7 @@ fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockEr
 
     fun parse(): Double {
         val x = parseExpression()
-        if (position < string.length) errorHandler(EvaluatorError.UNEXPECTED_CHAR)
+        if (position < string.length) DEFAULT_RESULT
         return x
     }
 
@@ -87,7 +87,7 @@ fun isNumberOrSymbol(string: String): Boolean {
     return true
 }
 
-fun mockErrorHandler(error: EvaluatorError): Double = 0.0 //default function for unit tests
+fun mockErrorHandler(error: Throwable): Double = 0.0 //default function for unit tests
 
 
 fun getErrorText(errorCode: Int): String = when (errorCode) {

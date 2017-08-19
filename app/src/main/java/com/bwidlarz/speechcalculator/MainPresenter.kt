@@ -1,9 +1,7 @@
 package com.bwidlarz.speechcalculator
 
-import com.bwidlarz.speechcalculator.common.BasePresenter
-import com.bwidlarz.speechcalculator.common.EMPTY_STRING
-import com.bwidlarz.speechcalculator.common.evaluate
-import com.bwidlarz.speechcalculator.common.isNumberOrSymbol
+import com.bwidlarz.speechcalculator.common.*
+import io.reactivex.Observable
 import java.util.*
 
 class MainPresenter : BasePresenter<SpeechView>() {
@@ -25,8 +23,11 @@ class MainPresenter : BasePresenter<SpeechView>() {
 
     fun evaluateExpression(stringExpression: String) {
         withView {
-            val evaluation = evaluate(stringExpression, this::onEvaluationError)
-            onEvaluationFinished(evaluation)
+            Observable.just(stringExpression)
+                    .compose(applyComputingShedulers())
+                    .map { evaluate(stringExpression, this::onEvaluationError) }
+                    .subscribe( { onEvaluationFinished(it) }, {onEvaluationError(it)})
+                    .addToDisposables(disposables)
         }
     }
 }
