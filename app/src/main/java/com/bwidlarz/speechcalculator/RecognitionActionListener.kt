@@ -5,4 +5,5 @@ interface RecognitionActionListener {
     fun onContinueClicked()
     fun onLoopClicked()
     fun onResetClicked()
+    fun onStopClicked()
 }
