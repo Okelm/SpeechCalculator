@@ -16,10 +16,12 @@ import android.widget.TextView
 import com.bwidlarz.speechcalculator.common.*
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
+import dagger.android.AndroidInjection
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import java.util.*
+import javax.inject.Inject
 
 class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
 
@@ -27,7 +29,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     private val EVALUATION = "evaluation"
 
     private lateinit var viewBinding: ActivityMainBinding
-    private lateinit var presenter: MainPresenter
+    @Inject lateinit var presenter: MainPresenter
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
     private lateinit var sharedPrefSettings: SharedPrefSettings
@@ -37,6 +39,8 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     private val DELAY_TUTORIAL_MS = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
         viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewBinding.listener = this
