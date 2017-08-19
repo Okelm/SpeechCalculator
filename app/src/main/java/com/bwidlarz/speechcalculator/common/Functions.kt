@@ -33,11 +33,15 @@ fun evaluate(string: String, errorHandler: (EvaluatorError) -> Double = ::mockEr
                 }
                 try {
                     parseDouble(string.substring(startPos, position))
-                } catch (e: NumberFormatException){
-                    errorHandler(EvaluatorError.UNEXPECTED_CHAR)
+                } catch (e: Exception){
+                    when(e){
+                        is NumberFormatException -> errorHandler(EvaluatorError.UNEXPECTED_CHAR)
+                        is StringIndexOutOfBoundsException -> errorHandler(EvaluatorError.PARSING)
+                        else -> errorHandler(EvaluatorError.UNKNOWN)
+                    }
                 }
             }
-            else -> errorHandler(EvaluatorError.UNEXPECTED_CHAR)
+            else -> errorHandler(EvaluatorError.UNKNOWN)
         }
     }
 
@@ -92,9 +96,9 @@ fun getErrorText(errorCode: Int): String = when (errorCode) {
     SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Insufficient permissions"
     SpeechRecognizer.ERROR_NETWORK -> "Network error"
     SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Network timeout"
-    SpeechRecognizer.ERROR_NO_MATCH -> "No match"
-    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RecognitionService busy"
+    SpeechRecognizer.ERROR_NO_MATCH -> "Couldn't match the expression. Please try again!"
+    SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "It's already on!"
     SpeechRecognizer.ERROR_SERVER -> "error from server"
-    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech input"
+    SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "I here silence, so let me rest..."
     else -> "Didn't understand, please try again."
 }
