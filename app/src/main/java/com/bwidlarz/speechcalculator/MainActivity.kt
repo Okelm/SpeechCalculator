@@ -100,21 +100,15 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         }
     }
 
-    override fun onReadyForSpeech(data: Bundle) {
-        showProgress(true)
-    }
+    override fun onReadyForSpeech(data: Bundle) = showProgress(true)
 
     override fun onBeginningOfSpeech() {
         textSoFar = viewBinding.expression.text.toString()
     }
 
-    override fun onPartialResults(partialResults: Bundle) {
-        proceedResults(partialResults, this::onPartialResultDelivered )
-    }
+    override fun onPartialResults(partialResults: Bundle) =proceedResults(partialResults, this::onPartialResultDelivered )
 
-    override fun onResults(results: Bundle) {
-        proceedResults(results, this::onLoopClicked)
-    }
+    override fun onResults(results: Bundle) = proceedResults(results, this::onLoopClicked)
 
     private fun proceedResults(partialResults: Bundle, doOnLoopType: () -> Unit) {
         val matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
@@ -174,9 +168,7 @@ class MainActivity : AppCompatActivity(), SpeechView, RecognitionActionListener,
         speechRecognizer.startListening(recognizerIntent)
     }
 
-    override fun onResetClicked() {
-        clearFields()
-    }
+    override fun onResetClicked() = clearFields()
 
     override fun onStopClicked() {
         speechRecognizer.cancel()
