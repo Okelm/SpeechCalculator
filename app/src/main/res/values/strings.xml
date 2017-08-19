@@ -10,11 +10,23 @@
     <string name="settings_label">Settings</string>
     <string name="ok">OK</string>
 
+    //Tutorial
+    <string name="got_it">GOT IT</string>
+    <string name="welcome_content">Welcome in short tutorial on how to use this app. Click GOT IT! when you ready to see what is next!</string>
+    <string name="expression_content">This is the simplest way to introduce new expression to calculate, deleting a previous content at the same time. But if you want to continue, without deleting…</string>
+    <string name="continue_content">…click CONTINUE button, the previous expressions will be added to what you are going to introduce. In case you are tired with constantly hitting CONTINUE button…</string>
+    <string name="loop_content">…click button LOOP. After each expression you will be given a chance to continue. Until you stop, either with button or by pausing your speech for a long time.</string>
+    <string name="expression_edittext_content">Your expressions is shown here while you introducing it, in realtime. You may edit it if you wish to. Your edition is taken on account immediately</string>
+    <string name="evaluation_text_content">Here you find the evaluation of above expression</string>
+    <string name="reset_content">Use it to reset the content</string>
+    <string name="stop_content_finish">Use it to stop introducing an expression. Simple, yea? Try it!</string>
+    <string name="replay_tutorial">Replay tutorial</string>
+
     <string name="app_name">SpeechCalculator</string>
     <string name="reset">Reset</string>
     <string name="loop">Loop</string>
     <string name="continue_button">Continue</string>
     <string name="new_button">New</string>
-    <string name="equal_sign">=</string>
+    <string name="equal_sign">= </string>
     <string name="stop">Stop</string>
 </resources>

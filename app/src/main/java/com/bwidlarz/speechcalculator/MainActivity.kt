@@ -9,13 +9,17 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.bwidlarz.speechcalculator.common.*
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import com.tbruyelle.rxpermissions2.RxPermissions
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig
 import java.util.*
-
 
 class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
 
@@ -26,6 +30,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     private lateinit var presenter: MainPresenter
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
+    private lateinit var sharedPrefSettings: SharedPrefSettings
 
     private var workingState: WorkingState = WorkingState.NONE
     private var textSoFar: String = EMPTY_STRING
@@ -36,9 +41,11 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         viewBinding.listener = this
 
         presenter = MainPresenter()
+        sharedPrefSettings = SharedPrefSettings(this)
 
         requestPermissions()
         restoreStateIfNeeded(savedInstanceState)
+        setShowcaseSequance()
     }
 
     private fun restoreStateIfNeeded(savedInstanceState: Bundle?) {
@@ -46,6 +53,20 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
                 viewBinding.evaluation.text = getString(EVALUATION)
                 viewBinding.expression.setText(getString(SO_FAR_TEXT_EXPRESSION), TextView.BufferType.EDITABLE)
             }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater?.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.replay_tutorial){
+            sharedPrefSettings.tutorialShownId = ++sharedPrefSettings.tutorialShownId
+            setShowcaseSequance()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onPause() {
@@ -57,7 +78,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
 
     override fun onDestroy() {
         super.onDestroy()
-        //speechRecognizer.destroy()
+        speechRecognizer.destroy()
     }
 
     override fun onResume() {
@@ -126,18 +147,18 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         }
     }
 
-    private fun createDisableLocationMockingDialog(): AlertDialog {
+    private fun createRedirectToSettingsDialog(): AlertDialog {
         return AlertDialog.Builder(this, R.style.Base_Theme_AppCompat_Light_Dialog)
                 .setTitle(getString(R.string.no_internet))
                 .setMessage(getString(R.string.no_internet_message))
-                .setPositiveButton(getString(R.string.settings_label), { dialog, _ -> startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS)) })
+                .setPositiveButton(getString(R.string.settings_label), { _ , _ -> startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS)) })
                 .setNegativeButton(getString(R.string.ok), { dialog, _ -> dialog.dismiss()})
                 .create()
     }
 
     override fun onError(error: Int) {
         when(error){
-            SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_SERVER -> createDisableLocationMockingDialog().show()
+            SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_SERVER -> createRedirectToSettingsDialog().show()
             else -> toast(getErrorText(error))
         }
         animateVisibility(viewBinding.progressBar, false)
@@ -210,4 +231,48 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     private fun onPartialResultDelivered() {}//todo
+
+    private fun setShowcaseSequance(){
+        val config = ShowcaseConfig()
+        config.delay = 0 // half second between each showcase view
+
+        val sequence = MaterialShowcaseSequence(this, sharedPrefSettings.tutorialShownId.toString())
+
+        sequence.apply {
+
+//            setOnItemShownListener { itemView, position -> Toast.makeText(itemView.context, "Item #" + position, Toast.LENGTH_SHORT).show() }
+            setConfig(config)
+            addSequenceItem(
+                    MaterialShowcaseView.Builder(this@MainActivity)
+                            .setDismissText(getString(R.string.got_it))
+                            .withoutShape()
+                            .setContentText(getString(R.string.welcome_content))
+                            .build()
+            )
+            addSequenceItem(viewBinding.buttonBar.newExpressionButton, getString(R.string.expression_content), getString(R.string.got_it))
+            addSequenceItem(viewBinding.buttonBar.continueExpressionButton, getString(R.string.continue_content), getString(R.string.got_it))
+            addSequenceItem(viewBinding.buttonBar.continuesEvaluationButton, getString(R.string.loop_content), getString(R.string.got_it))
+            addSequenceItem(
+                    MaterialShowcaseView.Builder(this@MainActivity)
+                            .setTarget(viewBinding.expression)
+                            .setTargetTouchable(true)
+                            .setDismissText(getString(R.string.got_it))
+                            .setContentText(getString(R.string.expression_edittext_content))//todo immediately
+                            .withRectangleShape(true)
+                            .build()
+            )
+            addSequenceItem(
+                    MaterialShowcaseView.Builder(this@MainActivity)
+                            .setTarget(viewBinding.evaluation)
+                            .setDismissText(getString(R.string.got_it))
+                            .setContentText(getString(R.string.evaluation_text_content))
+                            .withRectangleShape()
+                            .build()
+            )
+            addSequenceItem(viewBinding.buttonBar.resetButton, getString(R.string.reset_content), getString(R.string.got_it))
+            addSequenceItem(viewBinding.buttonBar.stopButton, getString(R.string.stop_content_finish), getString(R.string.got_it))
+
+            start()
+        }
+    }
 }
