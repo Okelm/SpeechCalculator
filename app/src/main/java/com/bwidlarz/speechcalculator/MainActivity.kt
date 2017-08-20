@@ -31,11 +31,6 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, RecognitionListenerAdapted {
 
-    private val SO_FAR_TEXT_EXPRESSION = "so_far_text_expression"
-    private val EVALUATION = "evaluation"
-
-    private lateinit var viewBinding: ActivityMainBinding
-
     @Inject lateinit var presenter: MainPresenter
     @Inject lateinit var sharedPrefSettings: Settings
     @Inject lateinit var speechRecognizer: SpeechRecognizer
@@ -43,6 +38,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     @Inject lateinit var dialogFactory: DialogFactory
     @Inject lateinit var animationFactory: AnimationFactory
 
+    private lateinit var viewBinding: ActivityMainBinding
     private var workingState: WorkingState = WorkingState.NONE
     private var textSoFar: String = EMPTY_STRING
 
@@ -60,13 +56,21 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
 
     private fun restoreStateIfNeeded(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
-            savedInstanceState.apply {
-                viewBinding.evaluation.text = getString(EVALUATION)
-                viewBinding.expression.setText(getString(SO_FAR_TEXT_EXPRESSION), TextView.BufferType.EDITABLE)
-            }
+            extractFieldsStateFromBundle(savedInstanceState)
         } else {
-            viewBinding.expression.setText(sharedPrefSettings.lastExpression, TextView.BufferType.EDITABLE)
-            viewBinding.evaluation.text = sharedPrefSettings.lastEvaluation
+            extractFieldsStateFromPrefs()
+        }
+    }
+
+    private fun extractFieldsStateFromPrefs() {
+        viewBinding.expression.setText(sharedPrefSettings.lastExpression, TextView.BufferType.EDITABLE)
+        viewBinding.evaluation.text = sharedPrefSettings.lastEvaluation
+    }
+
+    private fun extractFieldsStateFromBundle(savedInstanceState: Bundle) {
+        savedInstanceState.apply {
+            viewBinding.evaluation.text = getString(EVALUATION)
+            viewBinding.expression.setText(getString(SO_FAR_TEXT_EXPRESSION), TextView.BufferType.EDITABLE)
         }
     }
 
@@ -85,8 +89,6 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     override fun onPause() {
-//        speechRecognizer.stopListening()
-//        speechRecognizer.cancel()
         presenter.detach()
         super.onPause()
     }
@@ -95,8 +97,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         super.onStop()
 
         speechRecognizer.destroy()
-        sharedPrefSettings.lastExpression = viewBinding.expression.text.toString()
-        sharedPrefSettings.lastEvaluation = viewBinding.evaluation.text.toString()
+        saveStateToPrefs()
     }
 
     override fun onResume() {
@@ -109,6 +110,11 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         super.onSaveInstanceState(outState)
         outState?.putString(EVALUATION, viewBinding.evaluation.text.toString())
         outState?.putString(SO_FAR_TEXT_EXPRESSION, viewBinding.expression.text.toString())
+    }
+
+    private fun saveStateToPrefs() {
+        sharedPrefSettings.lastExpression = viewBinding.expression.text.toString()
+        sharedPrefSettings.lastEvaluation = viewBinding.evaluation.text.toString()
     }
 
     private fun requestPermissions() {
@@ -160,7 +166,8 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
 
     override fun onError(error: Int) {
         when (error) {
-            SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_SERVER -> dialogFactory.createRedirectToSettingsDialog(this).show()
+            SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_SERVER ->
+                dialogFactory.createRedirectToSettingsDialog(this).show()
             else -> toast(getErrorText(error))
         }
         showProgress(false)
@@ -186,17 +193,19 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
 
     override fun onNewEvaluationClicked() {
         clearFields()
-        workingState = WorkingState.NEW
-        speechRecognizer.startListening(recognizerIntent)
+        startListeningWithState(WorkingState.NEW)
     }
 
     override fun onContinueClicked() {
-        workingState = WorkingState.CONTINUE
-        speechRecognizer.startListening(recognizerIntent)
+        startListeningWithState(WorkingState.CONTINUE)
     }
 
     override fun onLoopClicked() {
-        workingState = WorkingState.LOOP
+        startListeningWithState(WorkingState.LOOP)
+    }
+
+    private fun startListeningWithState(state: WorkingState) {
+        workingState = state
         speechRecognizer.startListening(recognizerIntent)
     }
 
@@ -214,5 +223,10 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
             expression.text.clear()
             evaluation.clear()
         }
+    }
+
+    companion object {
+        const val SO_FAR_TEXT_EXPRESSION = "so_far_text_expression"
+        const val EVALUATION = "evaluation"
     }
 }
