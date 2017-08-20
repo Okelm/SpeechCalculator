@@ -2,13 +2,15 @@ package com.bwidlarz.speechcalculator.recognition
 
 import android.speech.SpeechRecognizer
 import com.bwidlarz.speechcalculator.common.DEFAULT_RESULT
+import com.bwidlarz.speechcalculator.common.NOT_NUMBER_OR_SYMBOL_CHAR
 import java.lang.Double.parseDouble
 
 fun evaluate(string: String, errorHandler: (Throwable) -> Double = { _ -> 0.0}): Double {
 
     var position = 0
     var char = '0'
-    val endingChar = '£'
+
+    val endingChar = NOT_NUMBER_OR_SYMBOL_CHAR
 
     fun moveToNextChar() {
         char = if (++position < string.length) string[position] else endingChar
@@ -32,6 +34,7 @@ fun evaluate(string: String, errorHandler: (Throwable) -> Double = { _ -> 0.0}):
                 while (isItStillNumber()) {
                     moveToNextChar()
                 }
+
                 try {
                     parseDouble(string.substring(startPos, position))
                 } catch (e: Exception) {

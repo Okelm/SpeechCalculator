@@ -14,13 +14,13 @@ class SharedPrefSettings(context: Context) : Settings {
         }
 
     override var lastExpression: String
-        get() = sharedPreferences.getString(LAST_KNOWN_EXPRESSION, "")
+        get() = sharedPreferences.getString(LAST_KNOWN_EXPRESSION, "5 + 5")
         set(value) {
             sharedPreferences.edit().putString(LAST_KNOWN_EXPRESSION, value).apply()
         }
 
     override var lastEvaluation: String
-        get() = sharedPreferences.getString(LAST_KNOWN_EVALUATION, "")
+        get() = sharedPreferences.getString(LAST_KNOWN_EVALUATION, "10")
         set(value) {
             sharedPreferences.edit().putString(LAST_KNOWN_EVALUATION, value).apply()
         }
