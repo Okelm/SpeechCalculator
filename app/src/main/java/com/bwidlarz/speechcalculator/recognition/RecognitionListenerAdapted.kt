@@ -1,10 +1,11 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.recognition
 
 import android.os.Bundle
 import android.speech.RecognitionListener
 
 //TODO
-interface RecognitionListenerAdapted: RecognitionListener {
+interface RecognitionListenerAdapted : RecognitionListener {
+
     override fun onReadyForSpeech(data: Bundle) {}
 
     override fun onRmsChanged(data: Float) {}

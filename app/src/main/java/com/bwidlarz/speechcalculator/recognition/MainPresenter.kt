@@ -1,8 +1,10 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.recognition
 
-import com.bwidlarz.speechcalculator.common.*
+import com.bwidlarz.speechcalculator.common.BasePresenter
+import com.bwidlarz.speechcalculator.common.EMPTY_STRING
+import com.bwidlarz.speechcalculator.common.addToDisposables
+import com.bwidlarz.speechcalculator.common.applyComputingShedulers
 import io.reactivex.Observable
-import java.util.*
 
 class MainPresenter : BasePresenter<SpeechView>() {
 
@@ -13,7 +15,7 @@ class MainPresenter : BasePresenter<SpeechView>() {
                 .firstOrNull()
 
         withView {
-            if (!result.isNullOrEmpty()){
+            if (!result.isNullOrEmpty()) {
                 val stringToShow = if (previousResult.isNotEmpty()) previousResult + EMPTY_STRING + result else result!!
                 onRecognitionFinished(stringToShow)
             }
@@ -26,7 +28,7 @@ class MainPresenter : BasePresenter<SpeechView>() {
             Observable.just(stringExpression)
                     .compose(applyComputingShedulers())
                     .map { evaluate(stringExpression, this::onEvaluationError) }
-                    .subscribe( { onEvaluationFinished(it) }, {onEvaluationError(it)})
+                    .subscribe( { onEvaluationFinished(it) }, { onEvaluationError(it) })
                     .addToDisposables(disposables)
         }
     }

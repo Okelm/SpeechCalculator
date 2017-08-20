@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import com.bwidlarz.speechcalculator.AnimationFactory
-import com.bwidlarz.speechcalculator.DialogFactory
-import com.bwidlarz.speechcalculator.MainPresenter
-import com.bwidlarz.speechcalculator.SharedPrefSettings
-import com.bwidlarz.speechcalculator.common.Settings
+import com.bwidlarz.speechcalculator.data.Settings
+import com.bwidlarz.speechcalculator.data.SharedPrefSettings
+import com.bwidlarz.speechcalculator.recognition.MainPresenter
+import com.bwidlarz.speechcalculator.utils.AnimationFactory
+import com.bwidlarz.speechcalculator.utils.DialogFactory
 import dagger.Module
 import dagger.Provides
-import java.util.*
+import java.util.Locale
 
 @Module
 class MainActivityModule {

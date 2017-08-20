@@ -4,8 +4,7 @@
 
         <variable
             name="listener"
-            type="com.bwidlarz.speechcalculator.RecognitionActionListener"/>
-
+            type="com.bwidlarz.speechcalculator.recognition.RecognitionActionListener"/>
     </data>
 
     <LinearLayout

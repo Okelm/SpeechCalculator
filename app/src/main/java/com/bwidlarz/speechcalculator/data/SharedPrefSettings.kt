@@ -1,8 +1,7 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.bwidlarz.speechcalculator.common.Settings
 
 class SharedPrefSettings(context: Context) : Settings {
 

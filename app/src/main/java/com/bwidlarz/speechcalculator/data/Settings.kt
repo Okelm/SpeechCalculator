@@ -1,4 +1,4 @@
-package com.bwidlarz.speechcalculator.common
+package com.bwidlarz.speechcalculator.data
 
 interface Settings {
 
