@@ -140,11 +140,11 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         textSoFar = viewBinding.expression.text.toString()
     }
 
-    override fun onPartialResults(partialResults: Bundle) = proceedResults(partialResults, this::onPartialResultDelivered )
+    override fun onPartialResults(partialResults: Bundle) = proceedResults(partialResults)
 
     override fun onResults(results: Bundle) = proceedResults(results, this::onLoopClicked)
 
-    private fun proceedResults(partialResults: Bundle, doOnLoopType: () -> Unit) {
+    private fun proceedResults(partialResults: Bundle, doOnLoopType: () -> Unit = {}) {
         val matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
 
         when (workingState) {
@@ -154,7 +154,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
                 presenter.loadSpeech(matches, textSoFar)
                 doOnLoopType()
             }
-            WorkingState.NONE -> toast("None") //todo
+            WorkingState.NONE -> RuntimeException("WorkingState should have been opted before running the recognition")
         }
     }
 
@@ -174,18 +174,15 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         viewBinding.expression.setSelection(stringExpression.length)
     }
 
-    override fun onRecognitionError() {
-        //todo
-    }
-
     override fun onEvaluationFinished(evaluation: Double) {
         viewBinding.evaluation.text = evaluation.toString()
     }
 
-    override fun onEvaluationError(throwable: Throwable): Double {
-        // toast(throwable.message.toString())
-        return DEFAULT_RESULT
-    }
+    // the empty result is so common that it is not worth handling. It might be implemented in the future though
+    override fun onRecognitionError() {}
+
+    // it might be use to somehow visualize the errors, right now its dummy implementation
+    override fun onEvaluationError(throwable: Throwable): Double = DEFAULT_RESULT
 
     override fun onNewEvaluationClicked() {
         clearFields()
@@ -218,6 +215,4 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
             evaluation.clear()
         }
     }
-
-    private fun onPartialResultDelivered() {} //todo
 }
