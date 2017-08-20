@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:autofit="http://schemas.android.com/tools">
 
     <data>
 
@@ -20,28 +21,49 @@
         <com.github.zagum.speechrecognitionview.RecognitionProgressView
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:layout_gravity="center" />
 
         <EditText
             android:id="@+id/expression"
+            android:inputType="text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:textSize="50sp"
+            android:maxLines="2"
             android:layout_marginTop="47dp" />
 
         <include layout="@layout/divider_layout" />
 
-        <TextView
-            android:id="@+id/evaluation"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="5dp"
-            android:text="@string/equal_sign"
-            android:textSize="40sp" />
+            android:orientation="horizontal">
 
-       <include layout="@layout/buttons_bar"
-           app:listener="@{listener}" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/equal_sign"
+                android:textSize="70sp" />
+
+            <me.grantland.widget.AutofitTextView
+                android:id="@+id/evaluation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textSize="70sp"
+                android:gravity="right"
+                autofit:minTextSize="16sp" />
+        </LinearLayout>
+
+        <include layout="@layout/divider_layout" />
+
+        <include
+            android:id="@+id/button_bar"
+            layout="@layout/buttons_bar"
+            app:listener="@{listener}" />
     </LinearLayout>
 </layout>

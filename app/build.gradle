@@ -22,6 +22,16 @@ android {
     dataBinding {
         enabled = true
     }
+
+    lintOptions {
+        textReport true
+        textOutput 'stdout'
+        ignore 'InvalidPackage', 'GoogleAppIndexingWarning', 'AllowBackup'
+    }
+
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+    }
 }
 
 dependencies {
@@ -34,7 +44,15 @@ dependencies {
     compile "io.reactivex.rxjava2:rxandroid:2.0.1"
 
     compile 'com.github.zagum:SpeechRecognitionView:1.0.2'
+    compile 'me.grantland:autofittextview:0.2.+'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     kapt 'com.android.databinding:compiler:2.3.3'
+
+    provided "com.google.dagger:dagger:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    compile "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -43,4 +61,8 @@ dependencies {
 }
 repositories {
     mavenCentral()
+}
+
+project.afterEvaluate {
+    lint.dependsOn ktlintCheck
 }
