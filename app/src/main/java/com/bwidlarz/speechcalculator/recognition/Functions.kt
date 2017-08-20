@@ -4,7 +4,7 @@ import android.speech.SpeechRecognizer
 import com.bwidlarz.speechcalculator.common.DEFAULT_RESULT
 import java.lang.Double.parseDouble
 
-fun evaluate(string: String, errorHandler: (Throwable) -> Double = ::mockErrorHandler): Double {
+fun evaluate(string: String, errorHandler: (Throwable) -> Double = { _ -> 0.0}): Double {
 
     var position = 0
     var char = '0'
@@ -36,6 +36,7 @@ fun evaluate(string: String, errorHandler: (Throwable) -> Double = ::mockErrorHa
                     parseDouble(string.substring(startPos, position))
                 } catch (e: Exception) {
                     when (e) {
+                        // two known errors which occured over there, might be handled differently in the future
                         is NumberFormatException -> errorHandler(e)
                         is StringIndexOutOfBoundsException -> errorHandler(e)
                         else -> errorHandler(e)
@@ -87,8 +88,6 @@ fun isNumberOrSymbol(string: String): Boolean {
     }
     return true
 }
-
-fun mockErrorHandler(error: Throwable): Double = 0.0 //default function for unit tests
 
 fun getErrorText(errorCode: Int): String = when (errorCode) {
     SpeechRecognizer.ERROR_AUDIO -> "Audio recording error"

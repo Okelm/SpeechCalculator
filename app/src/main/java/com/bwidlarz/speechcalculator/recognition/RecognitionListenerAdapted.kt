@@ -3,7 +3,6 @@ package com.bwidlarz.speechcalculator.recognition
 import android.os.Bundle
 import android.speech.RecognitionListener
 
-//TODO
 interface RecognitionListenerAdapted : RecognitionListener {
 
     override fun onReadyForSpeech(data: Bundle) {}
