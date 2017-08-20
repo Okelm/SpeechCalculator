@@ -1,11 +1,12 @@
-package com.bwidlarz.speechcalculator
+package com.bwidlarz.speechcalculator.utils
 
 import android.app.Activity
 import android.content.Context
 import android.view.View
-import com.bwidlarz.speechcalculator.common.Settings
+import com.bwidlarz.speechcalculator.R
 import com.bwidlarz.speechcalculator.common.gone
 import com.bwidlarz.speechcalculator.common.visible
+import com.bwidlarz.speechcalculator.data.Settings
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView

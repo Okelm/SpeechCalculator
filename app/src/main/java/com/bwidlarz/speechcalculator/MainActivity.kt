@@ -9,8 +9,22 @@ import android.support.v4.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import com.bwidlarz.speechcalculator.common.*
+import com.bwidlarz.speechcalculator.common.BaseActivity
+import com.bwidlarz.speechcalculator.common.EMPTY_STRING
+import com.bwidlarz.speechcalculator.common.DEFAULT_RESULT
+import com.bwidlarz.speechcalculator.common.addToDisposables
+import com.bwidlarz.speechcalculator.common.toast
+import com.bwidlarz.speechcalculator.common.clear
+import com.bwidlarz.speechcalculator.data.Settings
 import com.bwidlarz.speechcalculator.databinding.ActivityMainBinding
+import com.bwidlarz.speechcalculator.recognition.MainPresenter
+import com.bwidlarz.speechcalculator.recognition.RecognitionActionListener
+import com.bwidlarz.speechcalculator.recognition.RecognitionListenerAdapted
+import com.bwidlarz.speechcalculator.recognition.SpeechView
+import com.bwidlarz.speechcalculator.recognition.WorkingState
+import com.bwidlarz.speechcalculator.recognition.getErrorText
+import com.bwidlarz.speechcalculator.utils.AnimationFactory
+import com.bwidlarz.speechcalculator.utils.DialogFactory
 import com.tbruyelle.rxpermissions2.RxPermissions
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -45,7 +59,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     private fun restoreStateIfNeeded(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             savedInstanceState.apply {
                 viewBinding.evaluation.text = getString(EVALUATION)
                 viewBinding.expression.setText(getString(SO_FAR_TEXT_EXPRESSION), TextView.BufferType.EDITABLE)
@@ -62,7 +76,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.replay_tutorial){
+        if (item?.itemId == R.id.replay_tutorial) {
             sharedPrefSettings.tutorialShownId = ++sharedPrefSettings.tutorialShownId
             animationFactory.setMainShowcase(this, viewBinding).start()
             return true
@@ -126,7 +140,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         textSoFar = viewBinding.expression.text.toString()
     }
 
-    override fun onPartialResults(partialResults: Bundle) =proceedResults(partialResults, this::onPartialResultDelivered )
+    override fun onPartialResults(partialResults: Bundle) = proceedResults(partialResults, this::onPartialResultDelivered )
 
     override fun onResults(results: Bundle) = proceedResults(results, this::onLoopClicked)
 
@@ -145,7 +159,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     override fun onError(error: Int) {
-        when(error){
+        when (error) {
             SpeechRecognizer.ERROR_NETWORK, SpeechRecognizer.ERROR_SERVER -> dialogFactory.createRedirectToSettingsDialog(this).show()
             else -> toast(getErrorText(error))
         }
@@ -169,7 +183,7 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
     }
 
     override fun onEvaluationError(throwable: Throwable): Double {
-       // toast(throwable.message.toString())
+        // toast(throwable.message.toString())
         return DEFAULT_RESULT
     }
 
@@ -205,5 +219,5 @@ class MainActivity : BaseActivity(), SpeechView, RecognitionActionListener, Reco
         }
     }
 
-    private fun onPartialResultDelivered() {}//todo
+    private fun onPartialResultDelivered() {} //todo
 }
